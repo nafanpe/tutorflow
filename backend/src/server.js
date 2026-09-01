@@ -1,0 +1,23 @@
+const express = require('express')
+const cors = require('cors')
+require('dotenv').config()
+const pool = require('./db')
+
+const app = express()
+
+app.use(cors({origin: process.env.CLIENT_URL || '*'}))
+app.use(express.json())
+
+app.get('/api/health', async (req, res) => {
+    try {
+        const dbTest = await pool.query('select now()')
+        res.status(200).json({status: 'ok', db_connected: true, time: dbTest.rows[0].now})
+    } catch (error) {
+        res.status(500).json({status: 'error', message: error.message})
+    }
+})
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+    console.log(`Backend runnning on https://localhost:${PORT}`)
+})
