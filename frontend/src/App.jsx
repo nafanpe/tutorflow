@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_BASE_URL
   const [health, setHealth] = useState(null)
 
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/health')
+        const res = await fetch(`${API_URL}/api/health`)
         const data = await res.json()
         setHealth(data)
       } catch (error) {
