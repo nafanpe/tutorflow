@@ -2,12 +2,18 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
 const pool = require('./db')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 
+// middlewares
 app.use(cors({origin: process.env.CLIENT_URL || '*'}))
 app.use(express.json())
 
+// Authentitcation Routes
+app.use('/api/auth', authRoutes)
+
+// test route
 app.get('/api/health', async (req, res) => {
     try {
         const dbTest = await pool.query('select now()')
@@ -17,6 +23,7 @@ app.get('/api/health', async (req, res) => {
     }
 })
 
+// start app
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
     console.log(`Backend runnning on https://localhost:${PORT}`)
