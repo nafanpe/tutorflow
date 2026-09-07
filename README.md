@@ -49,7 +49,7 @@ The PostgreSQL database is normalized to ensure data integrity and enforce role-
 
 ## AI Integration & Prompt Engineering
 
-The platform utilizes Google's `gemini-1.5-flash` model via the `@google/genai` SDK. The AI is restricted to strict JSON schemas to ensure the React frontend can reliably map and render the outputs.
+The platform utilizes Google's `gemini-3.5-flash` model via the `@google/genai` SDK. The AI is restricted to strict JSON schemas to ensure the React frontend can reliably map and render the outputs.
 
 ### Pre-Session AI Plan
 **Prompt:**
@@ -93,3 +93,24 @@ Return ONLY a raw JSON object with this exact structure:
 ## Future Enhancements
 
 If I had another day to continue developing TutorFlow, I would build a cumulative progress tracking view where the AI analyzes all past session reviews to map a student's long-term trajectory. I would also integrate a transactional email service like SendGrid to automatically notify students when a new session is scheduled or when their homework is ready. Implementing real-time WebSocket connections would enhance the Live Session Room, ensuring that lifecycle state changes lock the workspace instantly across all active clients without requiring a manual refresh. I would expand the existing middleware to support an administrative role for onboarding new tutors and overseeing platform utilization metrics. Finally, adding a robust error monitoring tool and comprehensive React loading skeletons would further polish the user experience during API latency spikes.
+
+---
+
+## Tech Stack & Libraries
+
+### Frontend
+
+* **React** — Core UI library for building a dynamic single-page application.
+* **Tailwind CSS** — Utility-first CSS framework for responsive, modern styling.
+* **React Router DOM** — For client-side routing and managing role-based protected routes.
+* **Axios** — For handling asynchronous HTTP requests and intercepting global authentication errors.
+* **Lucide React** — For clean, scalable SVG iconography across the dashboard.
+
+### Backend
+
+* **Node.js & Express** — Lightweight server architecture for handling RESTful API requests.
+* **PostgreSQL (`pg`)** — Relational database ensuring strict data isolation, referential integrity, and atomic transactions.
+* **`@google/genai`** — The official Google SDK used to interface with the Gemini AI model for session planning and reviews.
+* **JSON Web Tokens (`jsonwebtoken`)** — For stateless, secure user authentication and role validation.
+* **Bcrypt (`bcryptjs`)** — For cryptographic password hashing prior to database storage.
+* **Dotenv** — For secure environment variable management.
