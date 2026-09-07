@@ -7,6 +7,7 @@ require('dotenv').config()
 
 const router = express.Router()
 
+// to login
 router.post('/login', async (req, res) => {
     console.log(req.body)
     const { email, password } = req.body
@@ -50,7 +51,7 @@ router.post('/login', async (req, res) => {
 // For AuthContext
 router.get('/me', authenticate, async (req, res) => {
     try {
-        const result = pool.query("select id, name, email, role from users where id = $1", [req.user.id])
+        const result = await pool.query("select id, name, email, role from users where id = $1", [req.user.id])
         
         if(result.rows.length === 0){
             res.status(404).json({error: "User not found."})

@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
             select u.id, u.name, sp.subject, sp.current_level, sp.learning_goals, sp.weak_areas
             from users u join student_profiles sp on u.id = sp.student_id
             where sp.tutor_id = $1
-            order by created_at desc
+            order by u.created_at desc
         `
         const result = await pool.query(query, [req.user.id])
         res.json(result.rows)
@@ -36,18 +36,17 @@ router.post('/', async (req, res) => {
         learning_goals,
         weak_areas
     } = req.body
-    const client = pool.connect()
+    const client = await pool.connect()
 
     try {
         await client.query('begin')
 
         const hashedPassword = await bcrypt.hash(password, 10)
-        const result = client.query(`
+        const result = await client.query(`
                 insert into users (email, password_hash, role, name)
-                values ($1, $2, 'student', $3)
+                values ($1, $2, 'student', $3) returning id
             `, [email, hashedPassword, name])
 
-        console.log(result) // check result - check how rows look for insert return value
         const studentID = result.rows[0].id
 
         await client.query(`

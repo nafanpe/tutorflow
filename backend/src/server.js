@@ -2,7 +2,11 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
 const pool = require('./db')
+
+// import Routes
 const authRoutes = require('./routes/auth')
+const studentRoutes = require('./routes/students')
+const sessionRoutes = require('./routes/sessions')
 
 const app = express()
 
@@ -12,6 +16,8 @@ app.use(express.json())
 
 // Authentitcation Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/students', studentRoutes)
+app.use('/api/sessions', sessionRoutes)
 
 // test route
 app.get('/api/health', async (req, res) => {
