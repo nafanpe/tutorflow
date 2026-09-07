@@ -90,12 +90,6 @@ Return ONLY a raw JSON object with this exact structure:
 
 ---
 
-## Future Enhancements
-
-If I had another day to continue developing TutorFlow, I would build a cumulative progress tracking view where the AI analyzes all past session reviews to map a student's long-term trajectory. I would also integrate a transactional email service like SendGrid to automatically notify students when a new session is scheduled or when their homework is ready. Implementing real-time WebSocket connections would enhance the Live Session Room, ensuring that lifecycle state changes lock the workspace instantly across all active clients without requiring a manual refresh. I would expand the existing middleware to support an administrative role for onboarding new tutors and overseeing platform utilization metrics. Finally, adding a robust error monitoring tool and comprehensive React loading skeletons would further polish the user experience during API latency spikes.
-
----
-
 ## Tech Stack & Libraries
 
 ### Frontend
@@ -114,3 +108,35 @@ If I had another day to continue developing TutorFlow, I would build a cumulativ
 * **JSON Web Tokens (`jsonwebtoken`)** — For stateless, secure user authentication and role validation.
 * **Bcrypt (`bcryptjs`)** — For cryptographic password hashing prior to database storage.
 * **Dotenv** — For secure environment variable management.
+
+---
+
+## API Endpoints & Routing
+
+The Express backend strictly enforces Role-Based Access Control (RBAC) via JWT middleware. Routes are protected to ensure tutors can only access their assigned students, and students can only view their own data.
+
+### Authentication (`/api/auth`)
+* `POST /login` - Validates credentials and issues a 7-day JWT (Public).
+* `GET /me` - Verifies the JWT and restores the client-side session (Protected).
+* `GET /seed` - Generates the initial test users for the evaluation (Public).
+
+### Students (`/api/students`)
+* `GET /` - Fetches all students assigned to the logged-in tutor (Tutor only).
+* `POST /` - Creates a new student profile with learning goals and weak areas (Tutor only).
+
+### Sessions (`/api/sessions`)
+* `GET /` - Fetches all sessions. Dynamically returns tutor-assigned sessions or student-enrolled sessions based on the requester's role (Protected).
+* `POST /` - Schedules a new session. Includes backend validation to prevent time overlaps/double-booking (Tutor only).
+* `GET /:id` - Retrieves a specific session joined with the student's context profile for the 3-panel workspace (Tutor only).
+* `PATCH /:id/status` - Moves the session through the strict lifecycle (`Scheduled` → `In progress` → `Completed` → `AI reviewed`) (Tutor only).
+* `PATCH /:id/notes` - Debounced endpoint to continuously autosave live session notes. Locked if the session is completed (Tutor only).
+
+### AI Integration (`/api/sessions`)
+* `POST /:id/ai-plan` - Prompts Gemini to generate a tailored JSON lesson plan using the student's weak areas and goals (Tutor only).
+* `POST /:id/ai-review` - Prompts Gemini to evaluate the tutor's live notes and return a JSON performance summary and homework tasks (Tutor only).
+
+---
+
+## Future Enhancements
+
+If I had another day to continue developing TutorFlow, I would build a cumulative progress tracking view where the AI analyzes all past session reviews to map a student's long-term trajectory. I would also integrate a transactional email service like SendGrid to automatically notify students when a new session is scheduled or when their homework is ready. Implementing real-time WebSocket connections would enhance the Live Session Room, ensuring that lifecycle state changes lock the workspace instantly across all active clients without requiring a manual refresh. I would expand the existing middleware to support an administrative role for onboarding new tutors and overseeing platform utilization metrics. Finally, adding a robust error monitoring tool and comprehensive React loading skeletons would further polish the user experience during API latency spikes.
