@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
+import { authAPI } from "../services/apiService"
 
 // icons
 import {BookOpen} from 'lucide-react'
@@ -14,31 +15,21 @@ export default function LoginPage(){
     const { login } = useAuth()
     const navigate = useNavigate()
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-
     const handleLogin = async (e) => {
         e.preventDefault()
         setError('')
         setIsLoading(true)
 
         try {
-            const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({email, password})
-            })
-    
-            const data = await res.json()
-    
-            if(res.ok){
-                login(data.user, data.token)
-                navigate(data.user.role === 'tutor' ? '/tutor/dashboard' : '/student/dashboard')
-            } else {
-                setError(data.error || 'Login failed.')
-            }
+            const res = await authAPI.login({ email, password });
+            login(res.data.user, res.data.token);
+            navigate(res.data.user.role === 'tutor' ? '/tutor/dashboard' : '/student/dashboard')
+            
         } catch (error) {
             console.error("error: ", error)
-            setError('Network error. Please try again.')
+            const backendErrorMessage = error.response?.data?.error;
+            setError(backendErrorMessage || 'Login failed. Please try again.');            
+            
         } finally {
             setIsLoading(false)
         }

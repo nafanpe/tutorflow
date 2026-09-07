@@ -7,7 +7,7 @@ export default function ProtectedRoute({allowedRole}){
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <p className="text-slate-500 font-medium">Loading session...</p>
+                <p className="text-slate-500 font-medium">athenticating...</p>
             </div>
         );
     }
