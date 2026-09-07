@@ -54,7 +54,7 @@ router.get('/me', authenticate, async (req, res) => {
         const result = await pool.query("select id, name, email, role from users where id = $1", [req.user.id])
         
         if(result.rows.length === 0){
-            res.status(404).json({error: "User not found."})
+            return res.status(404).json({error: "User not found."})
         }
 
         res.status(200).json(result.rows[0])

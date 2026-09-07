@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { authAPI } from "../services/apiService"
@@ -12,7 +12,7 @@ export default function LoginPage(){
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-    const { login } = useAuth()
+    const { login, user } = useAuth()
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -34,6 +34,12 @@ export default function LoginPage(){
             setIsLoading(false)
         }
     }
+
+    useEffect(() => {
+        if (user) {
+            navigate(user.role === 'tutor' ? '/tutor/dashboard' : '/student/dashboard', { replace: true });
+        }
+    }, [user, navigate]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">

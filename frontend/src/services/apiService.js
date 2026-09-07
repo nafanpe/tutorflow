@@ -14,4 +14,9 @@ export const studentAPI = {
 export const sessionAPI = {
     getAll: () => axiosInstance.get('/sessions'),
     create: (data) => axiosInstance.post('/sessions', data),
+    getById: (id) => axiosInstance.get(`/sessions/${id}`),
+    updateStatus: (id, status) => axiosInstance.patch(`/sessions/${id}/status`, { status }),
+    updateNotes: (id, notes) => axiosInstance.patch(`/sessions/${id}/notes`, { notes }),
+    generatePlan: (id) => axiosInstance.post(`/sessions/${id}/ai-plan`),
+    generateReview: (id) => axiosInstance.post(`/sessions/${id}/ai-review`),
 }
