@@ -14,6 +14,7 @@ router.get('/', async (req, res) => {
         const column = isTutor ? 's.tutor_id' : 's.student_id'
         const query = `
             select s.id, s.topic, s.start_time, s.end_time, s.status,
+                s.notes, s.ai_review,
                 u.name as student_name, sp.subject
             from sessions s
             join users u on s.student_id = u.id
@@ -141,7 +142,11 @@ router.post('/:id/ai-review', requireRole('tutor'), async (req, res) => {
             select s.topic, s.notes, sp.weak_areas
             from sessions s
             join student_profiles sp on s.student_id = sp.student_id
-            where s.id = $1 and tutor_id = $2`, [req.params.id, req.user.id])
+            where s.id = $1 and s.tutor_id = $2`, [req.params.id, req.user.id])
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Session not found.' });
+        }
 
         const session = result.rows[0]
         if(!session.notes || session.notes.trim() === ''){
@@ -150,7 +155,8 @@ router.post('/:id/ai-review', requireRole('tutor'), async (req, res) => {
 
         const aiReview = await generateSessionReview(session, session.topic, session.notes)
 
-        await pool.query('update sessions set ai_review = $1, status = $2 where id = $3', [aiReview, 'AI reviewed', req.params.id])
+        await pool.query('update sessions set ai_review = $1, status = $2 where id = $3 and tutor_id = $4', 
+            [aiReview, 'AI reviewed', req.params.id, req.user.id])
         res.json({ai_review: aiReview, status: 'AI reviewed'})
     } catch (error) {
         console.error(error);
