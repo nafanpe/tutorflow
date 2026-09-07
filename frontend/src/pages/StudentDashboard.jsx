@@ -24,6 +24,9 @@ export default function StudentDashboard(){
         fetchMySessions()
     }, [])
 
+    if (loading) return <div className="min-h-screen flex justify-center items-center bg-slate-50"><Loader2 className="animate-spin text-indigo-600" size={32} /></div>;
+    if (error) return <div className="p-8 text-center text-red-600 font-bold">{error}</div>;
+
     const upcomingSessions = sessions.filter(s => s.status === "Scheduled")
     const pastSessions = sessions.filter(s => ['Completed', 'AI reviewed'].includes(s.status));
 
@@ -55,7 +58,7 @@ export default function StudentDashboard(){
                         </div>
                     ) : (
                         <div className="grid gap-4" >
-                            {upcomingSessions.map(session => {
+                            {upcomingSessions.map(session => (
                                 <div key={session.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:justify-between md:items-center gap-4" >
                                     <div>
                                         <h3 className="font-bold text-slate-900 text-lg">{session.topic}</h3>
@@ -65,7 +68,7 @@ export default function StudentDashboard(){
                                         Status: {session.status}
                                     </div>
                                 </div>
-                            })}
+                            ))}
                         </div>
                     )}
                 </section>
