@@ -1,6 +1,8 @@
 # TutorFlow 
 **Developer:** Nafan P E
 
+**Please Note Backend is Hosted on Render - it'll take Approximately 30 seconds to cold start the server on first request**
+
 TutorFlow is a role-based educational technology platform designed to streamline 1-on-1 online tutoring. It provides state-managed session lifecycles, real-time debounced note-taking, and tailored AI integrations to assist tutors with lesson planning and homework generation.
 
 ---
