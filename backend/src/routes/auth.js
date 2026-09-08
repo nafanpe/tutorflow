@@ -87,7 +87,7 @@ router.get('/seed', async (req, res) => {
 })
 
 router.get('/ping', (req, res) => {
-    res. status(200).json({message: "ok"})
+    res.status(200).json({message: "ok"})
 }
 
 module.exports = router
